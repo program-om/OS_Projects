@@ -83,8 +83,10 @@ int insert_item(buffer_item item) {
 
         /* produce an item in next produced */ . . .
 
-        sem_wait(&empty);
         pthread_mutex_lock(&mutex);
+        sem_wait(&empty);
+        sem_post(&full);
+        
 
         if(){
 
@@ -94,7 +96,6 @@ int insert_item(buffer_item item) {
         /* add next produced to the buffer */ . . .
 
         pthread_mutex_unlock(&mutex);
-        sem_post(&full);
     } while (true);
     
 }
@@ -102,6 +103,26 @@ int insert_item(buffer_item item) {
 int remove_item(buffer_item *item) { 
     /* remove an object from buffer placing it in item return 0 if successful,
      otherwise return -1 indicating an error condition */
+
+     do {
+
+
+        /* produce an item in next produced */ . . .
+
+        pthread_mutex_lock(&mutex);
+        sem_wait(&full);
+        sem_post(&empty);
+        
+
+        if(){
+
+        } else{
+
+        }
+        /* add next produced to the buffer */ . . .
+
+        pthread_mutex_unlock(&mutex);
+    } while (true);
      
 }
 
