@@ -2,6 +2,10 @@
 #include <stdlib.h> /* required for rand() */
 #include <pthread.h> // pthread mutex lock, pthread mutex unlock
 #include <semaphore.h> // sem, sem_init, sem_wait, sem_post
+#include <stdio.h>
+#include <iostream>
+#include <unistd.h> //sleep
+#include <cstdlib> //rand()
 
 pthread_mutex_t mutex;
 /* create the mutex lock */ 
@@ -9,9 +13,17 @@ pthread_mutex_t mutex;
 //declare semaphore
 sem_t empty, full;
 
+int in = 0, out = 0;
+
 //will be manipulated as a circular queue
 /* the buffer */ 
 buffer_item buffer[BUFFER_SIZE];
+
+int insert_item(buffer_item item);
+int remove_item(buffer_item *item);
+void *producer(void *param);
+void *consumer(void *param);
+
 
 int main(int argc, char *argv[]) {
 
@@ -19,13 +31,13 @@ int main(int argc, char *argv[]) {
         numProdTh = atoi(argv[1]), //argv[1]: number of producer threads
         numConsTh = atoi(argv[2]); //argv[2]: number of consumer threads
 
-    if(argc != 3){
-        fprintf("Error: There must be 3 command line arguments");
+    if(argc != 4){
+        printf("Error: There must be 3 command line arguments");
         return -1;
     }
 
     if (sleepTime < 0 || numProdTh < 0 || numConsTh < 0) {
-        fprintf("Error: One of the argument is less than 0");
+        printf("Error: One of the argument is less than 0");
         return -1;
     }
 
@@ -49,9 +61,9 @@ int main(int argc, char *argv[]) {
         pthread_attr_t attr; /* set of thread attributes */
 
         /* get the default attributes */ 
-        pthread attr init(&attr);
+        pthread_attr_init(&attr);
         /* create the thread */ 
-        pthread create(&tid, &attr, producer, argv[1]);
+        pthread_create(&tid, &attr, producer, (void *)i);
 
     }
     /* 4. Create consumer thread(s) */
@@ -61,14 +73,14 @@ int main(int argc, char *argv[]) {
         pthread_attr_t attr; /* set of thread attributes */
 
         /* get the default attributes */ 
-        pthread attr init(&attr);
+        pthread_attr_init(&attr);
         /* create the thread */
         //cast i to thread args
-        pthread create(&tid, &attr, consumer, argv[1]);
+        pthread_create(&tid, &attr, consumer, (void *)i);
     }
+
     /* 5. Sleep */
     /* 6. Exit */
-
     sleep(numConsTh);
     return 0;
 
@@ -79,22 +91,21 @@ int insert_item(buffer_item item) {
      otherwise return -1 indicating an error condition */
 
     do {
-
-
-        /* produce an item in next produced */ . . .
+        /* produce an item in next produced */
 
         pthread_mutex_lock(&mutex);
         sem_wait(&empty);
         sem_post(&full);
-        
-
-        if(){
-
-        } else{
-
+        buffer[in] = item;
+            
+        if(buffer[in] == item){//successful
+            return 0;
+        } else{//error
+            return -1;
         }
-        /* add next produced to the buffer */ . . .
+        /* add next produced to the buffer */ 
 
+        in = (in+1) % BUFFER_SIZE;
         pthread_mutex_unlock(&mutex);
     } while (true);
     
@@ -105,22 +116,21 @@ int remove_item(buffer_item *item) {
      otherwise return -1 indicating an error condition */
 
      do {
-
-
-        /* produce an item in next produced */ . . .
+        /* produce an item in next produced */
 
         pthread_mutex_lock(&mutex);
         sem_wait(&full);
         sem_post(&empty);
-        
+        item = &buffer[out];
+        buffer[out] = 0;
 
-        if(){
-
+        if(buffer[out] == 0){
+            return 0;
         } else{
-
+            return -1;
         }
-        /* add next produced to the buffer */ . . .
-
+        /* add next produced to the buffer */ 
+        out = (out+1) % BUFFER_SIZE;
         pthread_mutex_unlock(&mutex);
     } while (true);
      
@@ -128,15 +138,16 @@ int remove_item(buffer_item *item) {
 
 void *producer(void *param) { 
     buffer_item item;
+    int *producerNum = (int *)param;
 
     while (true) {
 
         /* sleep for a random period of time */ 
-        sleep(...); 
+        sleep(10);
         /* generate a random number */ 
-        item = rand();
+        item = rand()%10000;
         if (insert_item(item)){
-            fprintf("report error condition");
+            printf("report error condition");
         } else{
             printf("producer produced %d\n", item);
         }
@@ -147,13 +158,14 @@ void *producer(void *param) {
 void *consumer(void *param) { 
 
     buffer_item item;
+    int *consumerNum = (int *)param;
 
     while (true) {
 
         /* sleep for a random period of time */ 
-        sleep(...);
+        sleep(10);
         if (remove_item(&item)){
-            fprintf("report error condition");
+            printf("report error condition");
         } else{
             printf("consumer consumed %d\n",item);
         }
