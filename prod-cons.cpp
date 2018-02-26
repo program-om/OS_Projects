@@ -82,7 +82,7 @@ int main(int argc, char *argv[]) {
         pthread_attr_init(&attr);
         /* create the thread */
         //cast i to thread args
-        pthread_create(&tid, &attr, consumer, (void *)i);
+        //pthread_create(&tid, &attr, consumer, (void *)i);
     }
 
     /* 5. Sleep */
@@ -104,20 +104,21 @@ int insert_item(buffer_item item) {
         sem_post(&full);
         
         buffer[in] = item;
-        
+	
         if(buffer[in] == item){//successful
             successful = true;
+	    //std::cout << buffer[in] << std::endl;
         } else{//error
             successful = false;
         }
 
         in = (in+1) % BUFFER_SIZE;
         pthread_mutex_unlock(&mutex);
-        /* add next produced to the buffer */ 
+        /* add next produced to the buffer */
         if(successful)
-            return true;
+            return 1;
         else
-            return false;
+            return 0;
     
 }
 
@@ -142,11 +143,11 @@ int remove_item(buffer_item *item) {
 
         out = (out+1) % BUFFER_SIZE;
         pthread_mutex_unlock(&mutex);
-        /* add next produced to the buffer */ 
+        /* add next produced to the buffer */
         if(successful) 
             return 0;
         else 
-            return -1;
+            return 1;
         
      
 }
@@ -167,6 +168,7 @@ void *producer(void *param) {
         } else{
             printf("producer %d produced %d\n", *producerNum, item);
         }
+	std::cout << "no seg" << std::endl;
     }
     pthread_exit(0);
 }
@@ -185,6 +187,7 @@ void *consumer(void *param) {
         } else{
             printf("consumer %d consumed %d\n", *consumerNum, item);
         }
+	std::cout << "no seg" << std::endl;
     }
     pthread_exit(0);
 }
