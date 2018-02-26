@@ -1,3 +1,7 @@
+// Note about running the file: use -lpthread for the semaphore
+// clang++ prod-cons.cpp -lpthread -o prod-cons
+// ./prod-cons n m l
+
 #include "buffer.h" // buffer
 #include <stdlib.h> /* required for rand() */
 #include <pthread.h> // pthread mutex lock, pthread mutex unlock
@@ -42,6 +46,7 @@ int main(int argc, char *argv[]) {
     }
 
     sem_init(&empty, 0, BUFFER_SIZE);
+    
     sem_init(&full, 0, 0);
     pthread_mutex_init(&mutex,NULL);
 
@@ -49,6 +54,7 @@ int main(int argc, char *argv[]) {
     /* 1. Get command line arguments argv[1],argv[2],argv[3] */ 
 
     /* 2. Initialize buffer */ //with random number
+    
     for(int i=0; i < BUFFER_SIZE; i++){
         int randomNum = rand();
         buffer[i] = randomNum;
@@ -90,32 +96,36 @@ int insert_item(buffer_item item) {
     /* insert item into buffer return 0 if successful,
      otherwise return -1 indicating an error condition */
 
-    do {
         /* produce an item in next produced */
+        bool successful;
 
         pthread_mutex_lock(&mutex);
         sem_wait(&empty);
         sem_post(&full);
+        
         buffer[in] = item;
-            
+        
         if(buffer[in] == item){//successful
-            return 0;
+            successful = true;
         } else{//error
-            return -1;
+            successful = false;
         }
-        /* add next produced to the buffer */ 
 
         in = (in+1) % BUFFER_SIZE;
         pthread_mutex_unlock(&mutex);
-    } while (true);
+        /* add next produced to the buffer */ 
+        if(successful)
+            return true;
+        else
+            return false;
     
 }
 
 int remove_item(buffer_item *item) { 
     /* remove an object from buffer placing it in item return 0 if successful,
      otherwise return -1 indicating an error condition */
+     bool successful;
 
-     do {
         /* produce an item in next produced */
 
         pthread_mutex_lock(&mutex);
@@ -125,32 +135,40 @@ int remove_item(buffer_item *item) {
         buffer[out] = 0;
 
         if(buffer[out] == 0){
-            return 0;
+            successful = true;
         } else{
-            return -1;
+            successful = false;
         }
-        /* add next produced to the buffer */ 
+
         out = (out+1) % BUFFER_SIZE;
         pthread_mutex_unlock(&mutex);
-    } while (true);
+        /* add next produced to the buffer */ 
+        if(successful) 
+            return 0;
+        else 
+            return -1;
+        
      
 }
 
 void *producer(void *param) { 
+    std::cout << "got here 0, ";
     buffer_item item;
     int *producerNum = (int *)param;
-
+std::cout << "got here 1, ";
     while (true) {
-
+std::cout << "got here 2, ";
         /* sleep for a random period of time */ 
-        sleep(10);
+        sleep(1);
         /* generate a random number */ 
         item = rand()%10000;
+        std::cout << "got here 3, ";
         if (insert_item(item)){
             printf("report error condition");
         } else{
-            printf("producer produced %d\n", item);
+            printf("producer %d produced %d\n", *producerNum, item);
         }
+        std::cout << "got here 4, ";
     }
     pthread_exit(0);
 }
@@ -163,11 +181,11 @@ void *consumer(void *param) {
     while (true) {
 
         /* sleep for a random period of time */ 
-        sleep(10);
+        sleep(1);
         if (remove_item(&item)){
             printf("report error condition");
         } else{
-            printf("consumer consumed %d\n",item);
+            printf("consumer %d consumed %d\n", *consumerNum, item);
         }
     }
     pthread_exit(0);
