@@ -31,9 +31,9 @@ void *consumer(void *param);
 
 int main(int argc, char *argv[]) {
 
-    int sleepTime = atoi(argv[0])*1000, //argv[0]: time for the main to sleep before terminating
-        numProdTh = atoi(argv[1]), //argv[1]: number of producer threads
-        numConsTh = atoi(argv[2]); //argv[2]: number of consumer threads
+    int sleepTime = atoi(argv[1])*1000, //argv[0]: time for the main to sleep before terminating
+        numProdTh = atoi(argv[2]), //argv[1]: number of producer threads
+        numConsTh = atoi(argv[3]); //argv[2]: number of consumer threads
 
     if(argc != 4){
         printf("Error: There must be 3 command line arguments");
