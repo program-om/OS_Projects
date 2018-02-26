@@ -69,7 +69,7 @@ int main(int argc, char *argv[]) {
         /* get the default attributes */ 
         pthread_attr_init(&attr);
         /* create the thread */ 
-        pthread_create(&tid, &attr, producer, (void *)i);
+        pthread_create(&tid, &attr, producer, (void *)(long)i);
 
     }
     /* 4. Create consumer thread(s) */
@@ -156,7 +156,7 @@ int remove_item(buffer_item *item) {
 void *producer(void *param) { 
     
     buffer_item item;
-    int producerNum = (int)param;
+    int producerNum = (int)(long)param;
 	
     while (true) {
         /* sleep for a random period of time */ 
