@@ -111,7 +111,7 @@ int insert_item(buffer_item item) {
         in = (in+1) % BUFFER_SIZE;
         
         /* add next produced to the buffer */
-//std::cout << "nope" << std::endl;
+	std::cout << "nope" << std::endl;
         if(successful)
             return 1;
         else
@@ -161,6 +161,7 @@ void *producer(void *param) {
 	pthread_mutex_lock(&mutex);
         sem_wait(&empty);
         sem_post(&full);
+	    std::cout << "nope prod" << std::endl;
         if (!insert_item(item)){
 		std::cout << "no seg1" << std::endl;
             printf("report error condition");
