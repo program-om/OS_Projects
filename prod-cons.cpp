@@ -55,10 +55,10 @@ int main(int argc, char *argv[]) {
 
     /* 2. Initialize buffer */ //with random number
     
-    for(int i=0; i < BUFFER_SIZE; i++){
-        int randomNum = rand();
-        buffer[i] = randomNum;
-    }
+//     for(int i=0; i < BUFFER_SIZE; i++){
+//         int randomNum = rand();
+//         buffer[i] = randomNum;
+//     }
 
     /* 3. Create producer thread(s) */
     for(int i=0; i < numProdTh; i++){
@@ -156,7 +156,7 @@ int remove_item(buffer_item *item) {
 void *producer(void *param) { 
     
     buffer_item item;
-    int *producerNum = (int *)param;
+    int producerNum = (int)param;
 	
     while (true) {
         /* sleep for a random period of time */ 
