@@ -31,7 +31,7 @@ void *consumer(void *param);
 
 int main(int argc, char *argv[]) {
 
-    int sleepTime = atoi(argv[0]), //argv[0]: time for the main to sleep before terminating
+    int sleepTime = atoi(argv[0])*1000, //argv[0]: time for the main to sleep before terminating
         numProdTh = atoi(argv[1]), //argv[1]: number of producer threads
         numConsTh = atoi(argv[2]); //argv[2]: number of consumer threads
 
@@ -87,7 +87,7 @@ int main(int argc, char *argv[]) {
 
     /* 5. Sleep */
     /* 6. Exit */
-    sleep(numConsTh);
+    sleep(sleepTime);
     return 0;
 
  }
@@ -152,23 +152,23 @@ int remove_item(buffer_item *item) {
 }
 
 void *producer(void *param) { 
-    std::cout << "got here 0, ";
+    
     buffer_item item;
     int *producerNum = (int *)param;
-std::cout << "got here 1, ";
+	std::cout << "got here 1" << std::endl;
     while (true) {
-std::cout << "got here 2, ";
+	std::cout << "got here 2" << std::endl;
         /* sleep for a random period of time */ 
         sleep(1);
         /* generate a random number */ 
         item = rand()%10000;
-        std::cout << "got here 3, ";
+        std::cout << "got here 3" << std::endl;
         if (insert_item(item)){
             printf("report error condition");
         } else{
             printf("producer %d produced %d\n", *producerNum, item);
         }
-        std::cout << "got here 4, ";
+        std::cout << "got here 4" << std::endl;
     }
     pthread_exit(0);
 }
