@@ -155,20 +155,18 @@ void *producer(void *param) {
     
     buffer_item item;
     int *producerNum = (int *)param;
-	std::cout << "got here 1" << std::endl;
+	
     while (true) {
-	std::cout << "got here 2" << std::endl;
         /* sleep for a random period of time */ 
         sleep(1);
         /* generate a random number */ 
         item = rand()%10000;
-        std::cout << "got here 3" << std::endl;
+        
         if (insert_item(item)){
             printf("report error condition");
         } else{
             printf("producer %d produced %d\n", *producerNum, item);
         }
-        std::cout << "got here 4" << std::endl;
     }
     pthread_exit(0);
 }
