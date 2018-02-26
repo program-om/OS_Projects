@@ -169,7 +169,7 @@ void *producer(void *param) {
             printf("report error condition");
         } else{
 		std::cout << "no seg2" << std::endl;
-            printf("producer %d produced %d\n", *producerNum, item);
+            printf("producer %d produced %d\n", producerNum, item);
         }
     }
     pthread_exit(0);
