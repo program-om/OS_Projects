@@ -104,17 +104,18 @@ int insert_item(buffer_item item) {
         sem_post(&full);
         
         buffer[in] = item;
-	
+	std::cout << "nope" << std::endl;
         if(buffer[in] == item){//successful
             successful = true;
 	    //std::cout << buffer[in] << std::endl;
         } else{//error
             successful = false;
         }
-
+std::cout << "nope" << std::endl;
         in = (in+1) % BUFFER_SIZE;
         pthread_mutex_unlock(&mutex);
         /* add next produced to the buffer */
+std::cout << "nope" << std::endl;
         if(successful)
             return 1;
         else
