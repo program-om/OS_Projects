@@ -82,7 +82,7 @@ int main(int argc, char *argv[]) {
         pthread_attr_init(&attr);
         /* create the thread */
         //cast i to thread args
-        //pthread_create(&tid, &attr, consumer, (void *)i);
+        pthread_create(&tid, &attr, consumer, (void *)(long)i);
     }
 
     /* 5. Sleep */
@@ -104,18 +104,18 @@ int insert_item(buffer_item item) {
         sem_post(&full);
         
         buffer[in] = item;
-	std::cout << "nope" << std::endl;
+	//std::cout << "nope" << std::endl;
         if(buffer[in] == item){//successful
             successful = true;
 	    //std::cout << buffer[in] << std::endl;
         } else{//error
             successful = false;
         }
-std::cout << "nope" << std::endl;
+//std::cout << "nope" << std::endl;
         in = (in+1) % BUFFER_SIZE;
         pthread_mutex_unlock(&mutex);
         /* add next produced to the buffer */
-std::cout << "nope" << std::endl;
+//std::cout << "nope" << std::endl;
         if(successful)
             return 1;
         else
@@ -178,7 +178,7 @@ void *producer(void *param) {
 void *consumer(void *param) { 
 
     buffer_item item;
-    int *consumerNum = (int *)param;
+    int *consumerNum = (int *)(long)param;
 
     while (true) {
 
