@@ -98,10 +98,6 @@ int insert_item(buffer_item item) {
 
         /* produce an item in next produced */
         bool successful;
-
-        pthread_mutex_lock(&mutex);
-        sem_wait(&empty);
-        sem_post(&full);
         
         buffer[in] = item;
 	//std::cout << "nope" << std::endl;
@@ -113,7 +109,7 @@ int insert_item(buffer_item item) {
         }
 //std::cout << "nope" << std::endl;
         in = (in+1) % BUFFER_SIZE;
-        pthread_mutex_unlock(&mutex);
+        
         /* add next produced to the buffer */
 //std::cout << "nope" << std::endl;
         if(successful)
@@ -130,9 +126,7 @@ int remove_item(buffer_item *item) {
 
         /* produce an item in next produced */
 
-        pthread_mutex_lock(&mutex);
-        sem_wait(&full);
-        sem_post(&empty);
+        
         item = &buffer[out];
         buffer[out] = 0;
 
@@ -143,7 +137,7 @@ int remove_item(buffer_item *item) {
         }
 
         out = (out+1) % BUFFER_SIZE;
-        pthread_mutex_unlock(&mutex);
+        
         /* add next produced to the buffer */
         if(successful) 
             return 0;
@@ -164,6 +158,9 @@ void *producer(void *param) {
         /* generate a random number */ 
         item = rand()%10000;
         
+	pthread_mutex_lock(&mutex);
+        sem_wait(&empty);
+        sem_post(&full);
         if (!insert_item(item)){
 		std::cout << "no seg1" << std::endl;
             printf("report error condition");
@@ -171,6 +168,7 @@ void *producer(void *param) {
 		std::cout << "no seg2" << std::endl;
             printf("producer %d produced %d\n", producerNum, item);
         }
+	pthread_mutex_unlock(&mutex);
     }
     pthread_exit(0);
 }
@@ -184,11 +182,15 @@ void *consumer(void *param) {
 
         /* sleep for a random period of time */ 
         sleep(1);
+	pthread_mutex_lock(&mutex);
+        sem_wait(&full);
+        sem_post(&empty);
         if (remove_item(&item)){
             printf("report error condition");
         } else{
             printf("consumer %d consumed %d\n", *consumerNum, item);
         }
+	pthread_mutex_unlock(&mutex);
 	std::cout << "no seg" << std::endl;
     }
     pthread_exit(0);
