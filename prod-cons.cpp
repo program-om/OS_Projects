@@ -163,7 +163,7 @@ void *producer(void *param) {
         /* generate a random number */ 
         item = rand()%10000;
         
-        if (insert_item(item)){
+        if (!insert_item(item)){
             printf("report error condition");
         } else{
             printf("producer %d produced %d\n", *producerNum, item);
