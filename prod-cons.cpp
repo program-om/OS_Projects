@@ -165,11 +165,12 @@ void *producer(void *param) {
         item = rand()%10000;
         
         if (!insert_item(item)){
+		std::cout << "no seg" << std::endl;
             printf("report error condition");
         } else{
+		std::cout << "no seg" << std::endl;
             printf("producer %d produced %d\n", *producerNum, item);
         }
-	std::cout << "no seg" << std::endl;
     }
     pthread_exit(0);
 }
