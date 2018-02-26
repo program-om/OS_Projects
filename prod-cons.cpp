@@ -31,7 +31,7 @@ void *consumer(void *param);
 
 int main(int argc, char *argv[]) {
 
-    int sleepTime = atoi(argv[1])*1000, //argv[0]: time for the main to sleep before terminating
+    int sleepTime = atoi(argv[1]), //argv[0]: time for the main to sleep before terminating
         numProdTh = atoi(argv[2]), //argv[1]: number of producer threads
         numConsTh = atoi(argv[3]); //argv[2]: number of consumer threads
 
