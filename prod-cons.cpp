@@ -156,7 +156,7 @@ int remove_item(buffer_item *item) {
 void *producer(void *param) { 
     
     buffer_item item;
-    int producerNum = (int)param;
+    int producerNum = (int*)param;
 	
     while (true) {
         /* sleep for a random period of time */ 
