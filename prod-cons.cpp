@@ -151,7 +151,7 @@ void *producer(void *param) {
     
     buffer_item item;
     int producerNum = (int)(long)param;
-	
+	std::cout << "prod here" << std::endl;
     while (true) {
         /* sleep for a random period of time */ 
         sleep(1);
