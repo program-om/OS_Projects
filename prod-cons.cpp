@@ -23,9 +23,13 @@ int in = 0, out = 0;
 /* the buffer */ 
 buffer_item buffer[BUFFER_SIZE];
 
+//This fuction will take the item and will place it the buffer
 int insert_item(buffer_item item);
+// This function will increment the out pointer and It pass the item removed by referencd.
 int remove_item(buffer_item &item);
+//producer will produce an item in the buffer
 void *producer(void *param);
+//consumer will get and remove an item from the buffer
 void *consumer(void *param);
 
 
@@ -44,6 +48,7 @@ int main(int argc, char *argv[]) {
         printf("Error: One of the argument is less than 0");
         return -1;
     }
+
 
     sem_init(&empty, 0, BUFFER_SIZE);
     
@@ -124,22 +129,15 @@ int insert_item(buffer_item item) {
 }
 
 int remove_item(buffer_item &item) { 
-    /* remove an object from buffer placing it in item return 0 if successful,
-     otherwise return -1 indicating an error condition */
-     //bool successful;
-
         /* produce an item in next produced */
 
         pthread_mutex_lock(&mutex_out);
         item = buffer[out];
-	//std::cout << buffer[out] << std::endl;
-        //buffer[out] = 0;
 
         out = (out+1) % BUFFER_SIZE;
         pthread_mutex_unlock(&mutex_out);
-        /* add next produced to the buffer */
 	
-            return 1;  
+            return 1;
 }
 
 void *producer(void *param) { 
