@@ -126,7 +126,7 @@ int insert_item(buffer_item item) {
 int remove_item(buffer_item *item) { 
     /* remove an object from buffer placing it in item return 0 if successful,
      otherwise return -1 indicating an error condition */
-     bool successful;
+     //bool successful;
 
         /* produce an item in next produced */
 
@@ -135,21 +135,11 @@ int remove_item(buffer_item *item) {
 	//std::cout << buffer[out] << std::endl;
         //buffer[out] = 0;
 
-        if(buffer[out] == 0){
-            successful = true;
-        } else{
-            successful = false;
-        }
-
         out = (out+1) % BUFFER_SIZE;
         pthread_mutex_unlock(&mutex_out);
         /* add next produced to the buffer */
-        if(successful) 
-            return 1;
-        else 
-            return 0;
-        
-     
+	
+            return 1;  
 }
 
 void *producer(void *param) { 
