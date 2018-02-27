@@ -178,7 +178,7 @@ void *consumer(void *param) {
 	
         sem_wait(&full); //decrement full items
      
-	std::cout << "nope 2" << std::endl;
+	//std::cout << "nope 2" << std::endl;
         if (!remove_item(&item)){
             printf("report error condition");
         } else{
