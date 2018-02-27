@@ -189,11 +189,10 @@ void *consumer(void *param) {
      
 	std::cout << "nope 2" << std::endl;
         if (!remove_item(&item)){
-	std::cout << "nope .." << std::endl;
             printf("report error condition");
         } else{
-	std::cout << "nope." << std::endl;
-            printf("consumer %d consumed %d\n", *consumerNum, item);
+	    //std::cout << "nope." << std::endl;
+            printf("consumer %d consumed %d\n", consumerNum, item);
         }
 	sem_post(&empty); //increment empty items
 	//std::cout << "no seg" << std::endl;
