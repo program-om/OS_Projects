@@ -177,7 +177,7 @@ void *producer(void *param) {
 void *consumer(void *param) { 
 
     buffer_item item;
-    int *consumerNum = (int *)(long)param;
+    int consumerNum = (int)(long)param;
 
     while (true) {
 
