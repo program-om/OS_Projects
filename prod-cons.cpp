@@ -11,7 +11,7 @@
 #include <unistd.h> //sleep
 #include <cstdlib> //rand()
 
-pthread_mutex_t mutex;
+pthread_mutex_t mutex_in, mutex_out;
 /* create the mutex lock */ 
 
 //declare semaphore
@@ -101,6 +101,7 @@ int insert_item(buffer_item item) {
         /* produce an item in next produced */
         bool successful;
         
+	pthread_mutex_lock(&mutex_in);
         buffer[in] = item;
 	//std::cout << "nope" << std::endl;
         if(buffer[in] == item){//successful
@@ -109,9 +110,9 @@ int insert_item(buffer_item item) {
         } else{//error
             successful = false;
         }
-//std::cout << "nope" << std::endl;
+	//std::cout << "nope" << std::endl;
         in = (in+1) % BUFFER_SIZE;
-        
+        pthread_mutex_unlock(&mutex_in);
         /* add next produced to the buffer */
 	//std::cout << "nope" << std::endl;
         if(successful)
@@ -128,7 +129,7 @@ int remove_item(buffer_item *item) {
 
         /* produce an item in next produced */
 
-        
+        pthread_mutex_lock(&mutex_out);
         item = &buffer[out];
         buffer[out] = 0;
 
@@ -139,7 +140,7 @@ int remove_item(buffer_item *item) {
         }
 
         out = (out+1) % BUFFER_SIZE;
-        
+        pthread_mutex_unlock(&mutex_out);
         /* add next produced to the buffer */
         if(successful) 
             return 1;
@@ -160,16 +161,14 @@ void *producer(void *param) {
         /* generate a random number */ 
         item = rand()%10000;
         
-	pthread_mutex_lock(&mutex);
-        sem_wait(&empty);
-        sem_post(&full);
+        sem_wait(&empty); //decrement empty items
 	    
         if (!insert_item(item)){
             printf("report error condition");
         } else{
             printf("producer %d produced %d\n", producerNum, item);
         }
-	pthread_mutex_unlock(&mutex);
+	sem_post(&full); //increment full items
     }
     pthread_exit(0);
 }
@@ -184,19 +183,19 @@ void *consumer(void *param) {
         /* sleep for a random period of time */ 
         sleep(1);
 //std::cout << "nope 1" << std::endl;
-	pthread_mutex_lock(&mutex);
-        sem_wait(&full);
-        sem_post(&empty);
-std::cout << "nope 2" << std::endl;
+	
+        sem_wait(&full); //decrement full items
+     
+	std::cout << "nope 2" << std::endl;
         if (!remove_item(&item)){
-std::cout << "nope .." << std::endl;
+	std::cout << "nope .." << std::endl;
             printf("report error condition");
         } else{
-std::cout << "nope." << std::endl;
+	std::cout << "nope." << std::endl;
             printf("consumer %d consumed %d\n", *consumerNum, item);
         }
-	pthread_mutex_unlock(&mutex);
-	std::cout << "no seg" << std::endl;
+	sem_post(&empty); //increment empty items
+	//std::cout << "no seg" << std::endl;
     }
     pthread_exit(0);
 }
