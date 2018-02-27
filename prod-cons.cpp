@@ -24,7 +24,7 @@ int in = 0, out = 0;
 buffer_item buffer[BUFFER_SIZE];
 
 int insert_item(buffer_item item);
-int remove_item(buffer_item *item);
+int remove_item(buffer_item &item);
 void *producer(void *param);
 void *consumer(void *param);
 
@@ -123,7 +123,7 @@ int insert_item(buffer_item item) {
     
 }
 
-int remove_item(buffer_item *item) { 
+int remove_item(buffer_item &item) { 
     /* remove an object from buffer placing it in item return 0 if successful,
      otherwise return -1 indicating an error condition */
      //bool successful;
