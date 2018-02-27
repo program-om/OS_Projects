@@ -74,7 +74,7 @@ int main(int argc, char *argv[]) {
 
     }
 
-	sleep(3);
+	//sleep(3);
     /* 4. Create consumer thread(s) */
     for(int i=0; i < numConsTh; i++){
 
@@ -132,7 +132,7 @@ int remove_item(buffer_item *item) {
 
         pthread_mutex_lock(&mutex_out);
         item = &buffer[out];
-	//std::cout << buffer[out] << std::endl;
+	std::cout << buffer[out] << std::endl;
         //buffer[out] = 0;
 
         out = (out+1) % BUFFER_SIZE;
