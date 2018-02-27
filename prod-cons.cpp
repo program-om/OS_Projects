@@ -131,7 +131,7 @@ int remove_item(buffer_item &item) {
         /* produce an item in next produced */
 
         pthread_mutex_lock(&mutex_out);
-        item = &buffer[out];
+        item = buffer[out];
 	std::cout << buffer[out] << std::endl;
         //buffer[out] = 0;
 
