@@ -183,11 +183,11 @@ void *consumer(void *param) {
 
         /* sleep for a random period of time */ 
         sleep(1);
-std::cout << "nope" << std::endl;
+//std::cout << "nope 1" << std::endl;
 	pthread_mutex_lock(&mutex);
         sem_wait(&full);
         sem_post(&empty);
-std::cout << "nope" << std::endl;
+std::cout << "nope 2" << std::endl;
         if (!remove_item(&item)){
 std::cout << "nope .." << std::endl;
             printf("report error condition");
