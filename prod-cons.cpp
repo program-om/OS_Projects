@@ -48,7 +48,8 @@ int main(int argc, char *argv[]) {
     sem_init(&empty, 0, BUFFER_SIZE);
     
     sem_init(&full, 0, 0);
-    pthread_mutex_init(&mutex,NULL);
+    pthread_mutex_init(&mutex_in,NULL);
+    pthread_mutex_init(&mutex_out,NULL);
 
     
     /* 1. Get command line arguments argv[1],argv[2],argv[3] */ 
