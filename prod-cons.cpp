@@ -72,6 +72,8 @@ int main(int argc, char *argv[]) {
         pthread_create(&tid, &attr, producer, (void *)(long)i);
 
     }
+
+	sleep(3);
     /* 4. Create consumer thread(s) */
     for(int i=0; i < numConsTh; i++){
 
@@ -111,7 +113,7 @@ int insert_item(buffer_item item) {
         in = (in+1) % BUFFER_SIZE;
         
         /* add next produced to the buffer */
-	std::cout << "nope" << std::endl;
+	//std::cout << "nope" << std::endl;
         if(successful)
             return 1;
         else
@@ -140,9 +142,9 @@ int remove_item(buffer_item *item) {
         
         /* add next produced to the buffer */
         if(successful) 
-            return 0;
-        else 
             return 1;
+        else 
+            return 0;
         
      
 }
@@ -151,7 +153,7 @@ void *producer(void *param) {
     
     buffer_item item;
     int producerNum = (int)(long)param;
-	std::cout << "prod here" << std::endl;
+
     while (true) {
         /* sleep for a random period of time */ 
         sleep(1);
@@ -161,12 +163,10 @@ void *producer(void *param) {
 	pthread_mutex_lock(&mutex);
         sem_wait(&empty);
         sem_post(&full);
-	    std::cout << "nope prod" << std::endl;
+	    
         if (!insert_item(item)){
-		std::cout << "no seg1" << std::endl;
             printf("report error condition");
         } else{
-		std::cout << "no seg2" << std::endl;
             printf("producer %d produced %d\n", producerNum, item);
         }
 	pthread_mutex_unlock(&mutex);
@@ -183,12 +183,16 @@ void *consumer(void *param) {
 
         /* sleep for a random period of time */ 
         sleep(1);
+std::cout << "nope" << std::endl;
 	pthread_mutex_lock(&mutex);
         sem_wait(&full);
         sem_post(&empty);
-        if (remove_item(&item)){
+std::cout << "nope" << std::endl;
+        if (!remove_item(&item)){
+std::cout << "nope .." << std::endl;
             printf("report error condition");
         } else{
+std::cout << "nope." << std::endl;
             printf("consumer %d consumed %d\n", *consumerNum, item);
         }
 	pthread_mutex_unlock(&mutex);
