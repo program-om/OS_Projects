@@ -118,8 +118,9 @@ void *producer(void *param) {
     int producerNum = (int)(long)param;
 
     while (true) {
-        /* sleep for a random period of time */ 
-        sleep(1);
+        /* sleep for a random period of time */
+        int time = rand()%3;
+        sleep(time);
         item = rand()%10000; // generate a random number
         sem_wait(&empty); //wait if the buffer is full
         insert_item(item);
@@ -139,7 +140,8 @@ void *consumer(void *param) {
     while (true) {
 
         /* sleep for a random period of time */ 
-        sleep(1);
+        int time = rand()%3;
+        sleep(time);
         sem_wait(&full); //decrement full items
         remove_item(item);
             
