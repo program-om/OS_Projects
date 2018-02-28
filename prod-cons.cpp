@@ -119,7 +119,7 @@ void *producer(void *param) {
 
     while (true) {
         /* sleep for a random period of time */
-        int time = rand()%3;
+        int time = rand()%5;
         sleep(time);
         item = rand()%10000; // generate a random number
         sem_wait(&empty); //wait if the buffer is full
