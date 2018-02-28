@@ -140,7 +140,7 @@ void *consumer(void *param) {
     while (true) {
 
         /* sleep for a random period of time */ 
-        int time = rand()%3;
+        int time = rand()%5;
         sleep(time);
         sem_wait(&full); //decrement full items
         remove_item(item);
