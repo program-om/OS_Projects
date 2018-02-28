@@ -35,6 +35,7 @@ void *consumer(void *param);
 
 int main(int argc, char *argv[]) {
 
+    /* 1. Get command line arguments argv[1],argv[2],argv[3] */ 
     int sleepTime = atoi(argv[1]), //argv[0]: time for the main to sleep before terminating
         numProdTh = atoi(argv[2]), //argv[1]: number of producer threads
         numConsTh = atoi(argv[3]); //argv[2]: number of consumer threads
@@ -49,22 +50,11 @@ int main(int argc, char *argv[]) {
         return -1;
     }
 
-
+    /* 2. Initialize buffer */ //with random number
     sem_init(&empty, 0, BUFFER_SIZE);
-    
     sem_init(&full, 0, 0);
     pthread_mutex_init(&mutex_in,NULL);
     pthread_mutex_init(&mutex_out,NULL);
-
-    
-    /* 1. Get command line arguments argv[1],argv[2],argv[3] */ 
-
-    /* 2. Initialize buffer */ //with random number
-    
-//     for(int i=0; i < BUFFER_SIZE; i++){
-//         int randomNum = rand();
-//         buffer[i] = randomNum;
-//     }
 
     /* 3. Create producer thread(s) */
     for(int i=0; i < numProdTh; i++){
@@ -79,7 +69,6 @@ int main(int argc, char *argv[]) {
 
     }
 
-	//sleep(3);
     /* 4. Create consumer thread(s) */
     for(int i=0; i < numConsTh; i++){
 
@@ -94,50 +83,33 @@ int main(int argc, char *argv[]) {
     }
 
     /* 5. Sleep */
-    /* 6. Exit */
     sleep(sleepTime);
+    /* 6. Exit */
     return 0;
 
  }
 
-int insert_item(buffer_item item) { 
-    /* insert item into buffer return 0 if successful,
-     otherwise return -1 indicating an error condition */
 
-        /* produce an item in next produced */
-        bool successful;
-        
+int insert_item(buffer_item item) { 
+
 	pthread_mutex_lock(&mutex_in);
-        buffer[in] = item;
-	//std::cout << "nope" << std::endl;
-        if(buffer[in] == item){//successful
-            successful = true;
-	    //std::cout << buffer[in] << std::endl;
-        } else{//error
-            successful = false;
-        }
-	//std::cout << "nope" << std::endl;
-        in = (in+1) % BUFFER_SIZE;
-        pthread_mutex_unlock(&mutex_in);
-        /* add next produced to the buffer */
-	//std::cout << "nope" << std::endl;
-        if(successful)
-            return 1;
-        else
-            return 0;
-    
+    //critical section
+    buffer[in] = item;
+    in = (in+1) % BUFFER_SIZE;
+    pthread_mutex_unlock(&mutex_in);
+        
+    return 1;
 }
 
 int remove_item(buffer_item &item) { 
-        /* produce an item in next produced */
 
-        pthread_mutex_lock(&mutex_out);
-        item = buffer[out];
+    pthread_mutex_lock(&mutex_out);
+    //critical section
+    item = buffer[out];
+    out = (out+1) % BUFFER_SIZE;
+    pthread_mutex_unlock(&mutex_out);
 
-        out = (out+1) % BUFFER_SIZE;
-        pthread_mutex_unlock(&mutex_out);
-	
-            return 1;
+    return 1;
 }
 
 void *producer(void *param) { 
@@ -148,17 +120,13 @@ void *producer(void *param) {
     while (true) {
         /* sleep for a random period of time */ 
         sleep(1);
-        /* generate a random number */ 
-        item = rand()%10000;
-        
-        sem_wait(&empty); //decrement empty items
-	    
-        if (!insert_item(item)){
-            printf("report error condition");
-        } else{
-            printf("producer %d produced %d\n", producerNum, item);
-        }
-	sem_post(&full); //increment full items
+        item = rand()%10000; // generate a random number
+        sem_wait(&empty); //wait if the buffer is full
+        insert_item(item);
+
+        printf("producer %d produced %d\n", producerNum, item);
+        //decrement the number of the empty slots by
+	    sem_post(&full);
     }
     pthread_exit(0);
 }
@@ -172,45 +140,11 @@ void *consumer(void *param) {
 
         /* sleep for a random period of time */ 
         sleep(1);
-//std::cout << "nope 1" << std::endl;
-	
         sem_wait(&full); //decrement full items
-     
-	//std::cout << "nope 2" << std::endl;
-        if (!remove_item(item)){
-            printf("report error condition");
-        } else{
-	    //std::cout << "nope." << std::endl;
-            printf("consumer %d consumed %d\n", consumerNum, item);
-        }
-	sem_post(&empty); //increment empty items
-	//std::cout << "no seg" << std::endl;
+        remove_item(item);
+            
+        printf("consumer %d consumed %d\n", consumerNum, item);
+	    sem_post(&empty); //increment empty items
     }
     pthread_exit(0);
 }
-
-
-//using mutex:
-/* acquire the mutex lock */ 
-//pthread_mutex_lock(&mutex); 
-/* critical section */
-/* release the mutex lock */
-//pthread_mutex_unlock(&mutex);
-
-
-
-//using semaphore:
-/* Create the semaphore and initialize it to 1 */ 
-
-/* acquire the semaphore */ 
-//sem_wait(&sem); 
-/* critical section */ 
-/* release the semaphore */ 
-//sem_post(&sem);
-
-/*'
- create n th prod
- create x th cons
- sleep -> while sleeping cons and prod will infinitely create new elements and remove elements
- terminate
-*/
