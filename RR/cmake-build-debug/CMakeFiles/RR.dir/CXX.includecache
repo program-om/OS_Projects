@@ -1,0 +1,26 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/Users/azsh/Desktop/GitHub/OS_Projects/RR/main.cpp
+stdio.h
+-
+stdlib.h
+-
+iostream
+-
+vector
+-
+string
+-
+sstream
+-
+algorithm
+-
+iterator
+-
+
