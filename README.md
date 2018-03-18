@@ -4,8 +4,5 @@
 
 
 - Simple shell
-    Working with processes.
 - Consumer Producer
-    Working with threads.
-- Round Robin algorithm simulation 
-    Simulating RR algorithm.
+- Round Robin algorithm simulation
