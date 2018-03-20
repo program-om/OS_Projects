@@ -11,6 +11,8 @@ stdio.h
 -
 stdlib.h
 -
+cstdlib
+-
 iostream
 -
 vector
@@ -22,5 +24,9 @@ sstream
 algorithm
 -
 iterator
+-
+fstream
+-
+string
 -
 
