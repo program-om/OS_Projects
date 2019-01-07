@@ -1,6 +1,6 @@
 # OS_Projects
-`with C++`
-## List of Operating System projects
+
+## List of Operating System projects `in C++`
 
 
 - Simple shell
