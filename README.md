@@ -7,5 +7,5 @@
 - Simple shell
 - Consumer Producer
 - Round Robin algorithm simulation
-- [Memory Management](https://github.com/program-om/Java_Projects/tree/master/Memory-Managment)
+- [Memory Management](https://github.com/program-om/Java_Projects/tree/master/Memory-Management)
 
